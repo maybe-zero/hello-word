@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>扫雷</title>
+	<style type="text/css">
+	    .game-contorl{
+	    	position: absolute;
+			top: calc(50% - 187px);
+			left:calc(50% - 225px);
+			width: auto;
+			height: auto;
+			padding: 10px 10px 10px 10px;
+			border: 1px solid #eee;
+			border-radius: 5px;
+	    }
+	    .boo-core{
+		    position: relative;
+		    margin-bottom: 20px;
+	    }
+		.boo-box{
+			float: left;
+		    position: relative;
+			bottom: 0;
+			left: 0;
+		}
+		.boo-dialog{
+			position: absolute;
+		    top: calc(50% - 40px);
+		    left: calc(50% - 70px);
+		    background: #fff;
+		    width: 150px;
+		    height: 80px;
+		    line-height: 80px;
+		    text-align: center;
+		    display: none;
+		}
+		.boo-core .grameChoose{
+			
+		}
+		.boo-core .timeStart{
+			float: right;
+		    margin: 0 20px;
+		}
+		.boo-box ul{
+			width: auto;
+		    height: auto;
+		    display: block;
+		    padding: 0;
+		    margin: 0;
+		}
+		.boo-box ul li{
+			float: left;
+			width:25px;
+			height: 25px;
+			border-top: 1px solid #555;
+			border-left: 1px solid #555;
+			text-align: center;
+			list-style: none;
+			position: relative;
+		}
+		.boo-box ul:last-child li{border-bottom: 1px solid #555;}
+		.boo-box ul li:last-child{border-right: 1px solid #555;}
+		.boo-box ul li:after{
+			content: "";
+		    width: 25px;
+		    height: 25px;
+		    background: #eee;
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		}
+		.boo-box ul li.boxshow:after{
+			content: "";
+		    width: 25px;
+		    height: 25px;
+		    background: transparent;
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		}
+		.boo-box ul li.boxflag:after{
+			content: "";
+		    width: 25px;
+		    height: 25px;
+		    background: #eee url(images/flag.jpg) no-repeat center;
+		    background-size: 100%;
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		}
+		.boo-box ul li.boo{
+			background: url(images/mine.jpg) no-repeat center;
+			background-size: 100%;
+		}
+		.boo-box ul li[booNum='0']{color:red;}
+		.boo-box ul li[booNum='1']{color:yellow;}
+		.boo-box ul li[booNum='2']{color:blue;}
+		.boo-box ul li[booNum='3']{color:green;}
+		.boo-box ul li[booNum='4']{color:#333;}
+		.boo-box ul li[booNum='5']{color:#333;}
+
+		.boo-box.big ul li{
+			float: left;
+			width:20px;
+			height: 20px;
+			border-top: 1px solid #555;
+			border-left: 1px solid #555;
+			text-align: center;
+			list-style: none;
+			position: relative;
+		}
+		.boo-box.big ul li:after{
+			content: "";
+		    width: 20px;
+		    height: 20px;
+		    background: #eee;
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		}
+		.boo-box.big ul li.boxshow:after{
+			content: "";
+		    width: 20px;
+		    height: 20px;
+		    background: transparent;
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		}
+		.boo-box.big ul li.boxflag:after{
+			content: "";
+		    width: 20px;
+		    height: 20px;
+		    background: #eee url(images/flag.jpg) no-repeat center;
+		    background-size: 100%;
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		}
+	</style>
+	<script type="text/javascript" src="jquery-1.11.0.min.js"></script>
+</head>
+<body>
+	<div class="game-contorl">
+		<div class="boo-core">
+			<select class="grameChoose">
+				<option>简单</option>
+				<option>一般</option>
+				<option>难</option>
+			</select>
+			<div class="timeStart"><span class="m">20</span>:<span class="s">00</span></div>
+		</div>
+		<div class="boo-box"></div>
+		<div class="boo-dialog"></div>
+	</div>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		gameOpen(10,7,15,5);
+		 //绑定下拉框change事件，当下来框改变时调用 SelectChange()方法
+        $(".grameChoose").change(function() { SelectChange(); });
+        var t;
+	});
+
+	    function SelectChange() {
+
+        //获取下拉框选中项的text属性值
+
+        var selectText = $(".grameChoose").find("option:selected").text();
+        if(selectText === '简单'){
+        	clearInterval(t);
+        	gameOpen(10,7,20,5);
+        	$('.boo-box').removeClass('big');
+        	$('.game-contorl').css('top',($(window).height()/2)-200);
+        	$('.game-contorl').css('left',($(window).width()/2)-200);
+
+        }
+        if(selectText === '一般'){
+        	clearInterval(t);
+        	$('.boo-box').removeClass('big');
+        	$('.game-contorl').css('top',($(window).height()/2)-280);
+        	$('.game-contorl').css('left',($(window).width()/2)-250);
+        	gameOpen(20,17,100,10);
+        }
+        if(selectText === '难'){
+        	clearInterval(t);
+        	$('.boo-box').addClass('big');
+        	$('.game-contorl').css('top',($(window).height()/2)-300);
+        	$('.game-contorl').css('left',($(window).width()/2)-350);
+        	gameOpen(30,27,200,20);
+        }
+
+    }
+
+
+		function gameOpen(x,y,boonum,times){
+			$('.boo-box').empty();
+			var indexX,indexY;
+			for(var i = 0 ;i < y ; i++ ){
+				$('.boo-box').append($('<ul>').addClass('nav-ul').attr('indey',i));
+			}
+		    for(var i = 0 ;i < x ; i++ ){
+				$('.nav-ul').append($('<li>').addClass('nav-li').attr('index',i));
+			}
+			booShow(x,y,boonum);
+			booNumber();
+
+			$('.m').html(times);
+			$('.s').html('00');
+			t = setInterval(function(){timeStart();},1000);
+			t;
+			// 阻止浏览器默认右键点击事件
+			$('.boo-box li').bind("contextmenu", function(){
+			    return false;
+			})
+			//整个页面屏蔽右击事件
+			// document.oncontextmenu = function() {
+			//     return false;
+			// }
+
+			$('.boo-box li').mousedown(function(e) {
+			    //右键为3
+			    if (3 == e.which) {
+			    	if($(this).hasClass('boxflag')) {
+			    		$(this).removeClass('boxflag');
+			    	}else{
+			             $(this).addClass('boxflag');
+			        }
+			        if($('.boo-box li.boxshow').length >= $('.boo-box li').length - boonum ){
+					    	// $('.boo-box .boo').addClass('boxshow');
+					    	setTimeout(function(){$('.boo-dialog').show().html('congratulate！');},1000);
+							setTimeout(function(){$('.boo-dialog').hide();SelectChange();},2000);
+					    }
+			    } else 
+			    if (1 == e.which) {
+			        //左键为1
+		        	if($(this).hasClass('boo')){
+						$('.boo-box .boo').addClass('boxshow');
+						setTimeout(function(){$('.boo-dialog').show().html('游戏结束！');},1000);
+						setTimeout(function(){$('.boo-dialog').hide();SelectChange();},2000);
+					}else{
+						$(this).addClass('boxshow');
+					    showBox($(this));
+					    if($('.boo-box li.boxshow').length >= $('.boo-box li').length - boonum ){
+					    	// $('.boo-box .boo').addClass('boxshow');
+					    	setTimeout(function(){$('.boo-dialog').show().html('congratulate！');},1000);
+							setTimeout(function(){$('.boo-dialog').hide();SelectChange();},2000);
+					    }
+				    }
+			    }
+			});
+
+
+		}
+		function diu_Randomize(b,e){   
+			if(!b && b!=0 || !e){return "?";}   
+			return Math.floor( ( Math.random() * e ) + b );   
+		} 
+		function booShow(bx,by,num){
+			for(var x = 0 ; x < num ; x++){
+				var indexX = diu_Randomize(0,bx-1),
+				    indexY = diu_Randomize(0,by-1);
+				$('.boo-box ul').each(function(i,item){
+					if(i === indexY){
+						$(this).find('li').each(function(j,jtem){
+							if(j === indexX){
+								$(this).addClass('boo');
+							}
+						});				
+					}
+				});
+			}
+		}
+		function booNumber(){
+			var booNum  = 0 ;
+			$('.boo-box li').each(function(i,item){
+				if(!$(this).hasClass('boo')){
+					var brother = itemBorther($(this));
+					$.each(brother,function(a,b){
+						if(b.length > 0 && b.hasClass('boo')){booNum++;}
+					});
+					$(this).html(booNum).attr('booNum',booNum);
+					booNum = 0;
+			    }
+
+			});
+		}
+
+		function itemBorther(item){
+			var index = parseInt(item.attr('index')),
+				indey = parseInt(item.parent().attr('indey')),
+				itemAfter = item.prev(),
+				itemBefore = item.next(),
+				itemTopright = $('.boo-box ul[indey=' + (indey-1) + ']').find('[index='+ (index + 1) +']'),
+				itemTop = $('.boo-box ul[indey=' + (indey-1) + ']').find('[index='+ index +']'),
+				itemTopleft = $('.boo-box ul[indey=' + (indey-1) + ']').find('[index='+ (index - 1) +']'),
+				itemBottomright = $('.boo-box ul[indey=' + (indey+1) + ']').find('[index='+ (index + 1) +']'),
+				itemBottom = $('.boo-box ul[indey=' + (indey+1) + ']').find('[index='+ index +']'),
+				itemBottomleft = $('.boo-box ul[indey=' + (indey+1) + ']').find('[index='+ (index - 1) +']');
+			// return [{
+			// 			'itemAfter':itemAfter,
+			// 			'itemBefore':itemBefore,
+			// 			'itemTopright':itemTopright,
+			// 			'itemTop':itemTop,
+			// 			'itemTopleft':itemTopleft,
+			// 			'itemBottomright':itemBottomright,
+			// 			'itemBottom':itemBottom,
+			// 			'itemBottomleft':itemBottomleft
+
+		 //         }];
+			 return {
+					 	itemAfter,
+					 	itemBefore,
+					 	itemTopright,
+					 	itemTop,
+					 	itemTopleft,
+					 	itemBottomright,
+					 	itemBottom,
+					 	itemBottomleft
+					 }
+		 }
+
+		 function showBox(item){
+		 	var itemNum = parseInt(item.html());
+		 	if(itemNum === 0){
+			 	var brother = itemBorther(item);
+			 	$.each(brother,function(a,b){
+			 		if(!b.hasClass('boxshow')){
+			 		   b.addClass('boxshow');
+			 	    }else{
+			 	    	return true;
+			 	    }
+					if(b.length > 0 && parseInt(b.html()) === 0 ){showBox(b)}
+				});
+			 }else{
+			 	item.addClass('boxshow');
+			 }
+
+		 }
+		 function timeStart(){
+		 	var m = parseInt($('.m').html());
+		 	var s = parseInt($('.s').html());
+		 	if(s === 0){$('.m').html(m-1);$('.s').html('60');}
+		 	else if(s < 10){$('.s').html('0' + s-1);}
+		 	else{$('.s').html(s-1)}
+		 }
+</script>
+</body>
+</html>
